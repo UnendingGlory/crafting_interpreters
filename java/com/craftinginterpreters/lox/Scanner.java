@@ -85,7 +85,9 @@ class Scanner {
 //< two-char-tokens
 //> slash
       case '/':
-        if (match('/')) {
+        if (match('*')) {
+          blockComment();
+        } else if (match('/')) {
           // A comment goes until the end of the line.
           while (peek() != '\n' && !isAtEnd()) advance();
         } else {
@@ -238,4 +240,31 @@ class Scanner {
     tokens.add(new Token(type, text, literal, line));
   }
 //< advance-and-add-token
+
+  private void blockComment() {
+    int nesting = 1;
+    while (nesting > 0) {
+      if (peek() == '\n') {
+        Lox.error(line, "Unterminated block comment");
+        break;
+      }
+
+      if (peek() == '/' && peekNext() == '*') {
+        advance();
+        advance();
+        nesting++;
+        continue;
+      }
+
+      if (peek() == '*' && peekNext() == '/') {
+        advance();
+        advance();
+        nesting--;
+        continue;
+      }
+
+      // skip the common comment character
+      advance();
+    }
+  }
 }
