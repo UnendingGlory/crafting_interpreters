@@ -1,0 +1,4 @@
+/* Here is a comment.*/
+/* /* Here is a comment. */ */
+var a = "hello world";
+print a;
